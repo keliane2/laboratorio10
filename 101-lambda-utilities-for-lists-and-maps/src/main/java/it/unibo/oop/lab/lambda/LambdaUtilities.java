@@ -2,6 +2,7 @@ package it.unibo.oop.lab.lambda;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,7 +62,9 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Optional.filter
          */
-        return null;
+        final List<Optional<T>> optionalList=new ArrayList<Optional<T>>();
+        list.forEach(o->optionalList.add(Optional.of(o).filter(pre)));
+        return optionalList;
     }
 
     /**
@@ -69,6 +72,7 @@ public final class LambdaUtilities {
      *            input list
      * @param op
      *            a function that, for each element, computes a key
+     * @param t 
      * @param <T>
      *            element type
      * @param <R>
@@ -76,11 +80,20 @@ public final class LambdaUtilities {
      * @return a map that groups into categories each element of the input list,
      *         based on the mapping done by the function
      */
+    private static <T> Set<T> mergeSet(Set<T> a, Set<T> b){
+        Set<T> hs = new HashSet<>();
+        hs.addAll(a);
+        hs.addAll(b);
+        return hs;
+    }
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
         /*
          * Suggestion: consider Map.merge
-         */
-        return null;
+        */
+
+        Map<R,Set<T>> myMap=new HashMap<>(list.size());
+        list.forEach(o->myMap.merge(op.apply(o), Set.of(o), (a,b)->LambdaUtilities.mergeSet(a,b)));
+        return myMap;
     }
 
     /**
@@ -101,7 +114,9 @@ public final class LambdaUtilities {
          *
          * Keep in mind that a map can be iterated through its forEach method
          */
-        return null;
+        Map<K,V> myMap=new HashMap<>(map.size());
+        map.forEach((k,v)->myMap.put(k,v.orElse(def.get())));
+        return myMap;
     }
 
     /**
